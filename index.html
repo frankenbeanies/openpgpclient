@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Open PGP Client</title>
+  <!-- fix jquery load error -->
+  <script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+
+  <!-- JQuery -->
+  <script src="js/jquery_3_1_1.min.js"></script>
+
+  <!-- Bootstrap -->
+  <script src="js/bootstrap.min.js"></script>
+  <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+  <!-- Custom -->
+  <link href="css/style.css" rel="stylesheet" type="text/css" />
+  <script src="js/script.js"></script>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar fixed-top navbar-toggleable-sm navbar-inverse">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" href="#">.</a>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" id="nav-link-0" href="#" onclick="activateGenerate()">Generate</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="nav-link-1" href="#" onclick="activateEncrypt();">Encrypt</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" id="nav-link-2" href="#" onclick="activateDecrypt();">Decrypt</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Generate -->
+  <div id="generate-div" class="container-fluid padded">
+    <div class="row">
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-primary">1</h4>
+          <label class="inline-label">PGP Info</label>
+        </div>
+        <div class="alert alert-info" role="alert">
+          Please enter your information. It will be used to generate your PGP Keys.
+        </div>
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label for="fname">First Name</label>
+            <input id="fname" type="text" class="form-control" placeholder="John"/>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="lname">Last Name</label>
+            <input id="lname" type="text" class="form-control" placeholder="Doe"/>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input id="email" type="email" class="form-control" placeholder="johndoe@domain.com" />
+        </div>
+        <div class="form-group">
+          <label for="passphrase">Passphrase</label>
+          <input id="passphrase" type="password" class="form-control" placeholder="Make it long. Make it strong." />
+        </div>
+        <div class="form-group">
+          <label for="rsa-length">RSA Length</label>
+          <select class="form-control" id="rsa-length">
+            <option>2048</option>
+            <option>4096</option>
+          </select>
+        </div>
+        <div class="center-align">
+          <button class="btn btn-primary" onclick="generateKeys()">Generate PGP Keys</button>
+        </div>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-success">2</h4>
+          <label class="inline-label" for="generate-private-key">Your PGP Private Key</label>
+        </div>
+        <div class="alert alert-success" role="alert">
+          Your PGP Private Key will appear below. This key will be used to decrypt messages. Keep it a secret.
+        </div>
+        <textarea class="form-control" id="generate-private-key" placeholder="Your generated PGP Private Key will appear here." readonly></textarea>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-success">3</h4>
+          <label class="inline-label" for="gneerate-public-key">Your PGP Public Key</label>
+        </div>
+        <div class="alert alert-success" role="alert">
+          Your PGP Public Key will appear below. This key will be used to encrypt messages. You can share it with other people. 
+        </div>
+        <textarea class="form-control" id="generate-public-key" placeholder="Your generated PGP Public Key will appear here." readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Encrypt -->
+  <div id="encrypt-div" class="container-fluid padded">
+    <div class="row">
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-primary">1</h4>
+          <label for="encrypt-public-key" class="inline-label">PGP Public Key</label>
+        </div>
+        <div class="alert alert-info" role="alert">
+          Please copy and paste the recipient's PGP Public Key into the text area below:
+        </div>
+        <textarea class="form-control" id="encrypt-public-key" placeholder="Paste the RECIPIENT'S Public Key"></textarea>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-primary">2</h4>
+          <label for="encrypt-message-input" class="inline-label">Message to Encrypt</label>
+        </div>
+        <div class="alert alert-info" role="alert">
+          Please write the message to encrypt in the text area below:
+        </div>
+        <textarea class="form-control" id="encrypt-message-input" placeholder="Enter message to encrypt"></textarea><br />
+        <div class="center-align">
+          <button class="btn btn-primary" onclick="encrypt();">Encrypt</button>
+        </div>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-success">3</h4>
+          <label for="encrypt-message-output" class="inline-label">Encrypted Message</label>
+        </div>
+        <div class="alert alert-success" role="alert">
+          The encrypted message will appear below:
+        </div>
+        <textarea class="form-control" id="encrypt-message-output" placeholder="Encrypted message will be here" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Decrypt -->
+  <div id="decrypt-div" class="container-fluid padded">
+    <div class="row">
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-primary">1</h4>
+          <label for="decrypt-private-key" class="inline-label">PGP Private Key</label>
+        </div>
+        <div class="alert alert-info" role="alert">
+          Please copy and paste your PGP Private Key into the text area below:
+        </div>
+        <textarea class="form-control" id="decrypt-private-key" placeholder="Paste your Private Key"></textarea>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-primary">2</h4>
+          <label for="decrypt-message-input" class="inline-label">PGP Encrypted Message</label>
+        </div>
+        <div class="alert alert-info" role="alert">
+          Please copy and paste the PGP encrypted message into the text area below:
+        </div>
+        <textarea class="form-control" id="decrypt-message-input" placeholder="Paste your PGP encrypted message"></textarea><br />
+        <div class="form-group">
+          <label for="decrypt-passphrase">Passphrase</label>
+          <input class="form-control" type="password" id="decrypt-passphrase" placeholder="Optional"/>
+        </div>
+        <div class="center-align"><br />
+          <button class="btn btn-primary" onclick="decrypt();">Decrypt</button>
+        </div>
+      </div>
+      <div class="form-group-padded col-lg-4">
+        <div class="row">
+          <h4 class="circle-num bg-success">3</h4>
+          <label for="decrypt-message-output" class="inline-label">Decrypted Message</label>
+        </div>
+        <div class="alert alert-success" role="alert">
+          Your decrypted message will appear below. If it does not, ensure that you supplied the proper passphrase if required
+        </div>
+        <textarea class="form-control" id="decrypt-message-output" placeholder="Your decrypted message will appear here." readonly></textarea>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
