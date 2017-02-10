@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "main": "main.js",
   "dependencies": {
-    "openpgp": "^2.3.6"
+    "openpgp": "^2.3.6",
+    "electron": "^1.4.15"
   }
 }
